@@ -1,0 +1,218 @@
+{
+  "name": "Resume Analyser",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resume-analyze",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "resume"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -464,
+        32
+      ],
+      "id": "5688642f-b9fc-4c72-b5e3-29cc685d2420",
+      "name": "Webhook",
+      "webhookId": "9d94b8f7-7d10-4733-9bd6-8fe9d8b7315d"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "resume0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        32
+      ],
+      "id": "71e52852-74c1-43eb-aafc-b5e7337e9bc8",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1056,
+        32
+      ],
+      "id": "61711d52-5558-4224-8162-0379d7a07d1b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7fddee8-6ef6-4510-a36d-dfc72b2c0d42",
+              "name": "analysis",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        32
+      ],
+      "id": "ba697bec-e848-444c-8d13-7ce34823834b",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9f7e6d26-d28d-45bd-993a-6d9338a24958",
+              "name": "resume_text",
+              "value": "={{ \n  $json.text\n    .replace(/\\*\\*/g, '')\n    .replace(/\\\\n/g, '\\n')\n}}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        32
+      ],
+      "id": "5aaf09e8-d7ac-4e81-b891-ca7612a85db1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        320,
+        272
+      ],
+      "id": "3a9afd6f-8cde-449e-ba6d-b1d43509ad0f",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "o8fAjc7iibbDqA6w",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional resume reviewer.\n\nWrite the analysis in VERY SIMPLE plain English.\nDo NOT use markdown.\nDo NOT use **, ##, or any formatting symbols.\nDo NOT use \\n in the output.\nWrite everything as clean readable text.\n\nRules:\n- Use clear headings with colon (:)\n- Use bullet points starting with \"-\"\n- One point per line\n- Short sentences only\n- Easy for a beginner to understand\n\nWrite exactly in this format:\n\nResume Score:\n<score>/100\n\nStrengths:\n- point\n- point\n\nWeaknesses:\n- point\n- point\n\nMissing Skills:\n- point\n- point\n\nHow to Improve:\n- step\n- step\n- step\n\nNow analyze this resume:\n\n{{$json.resume_text}}\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.8,
+      "position": [
+        320,
+        32
+      ],
+      "id": "b04149b3-e8bf-4a92-beec-682bfefa6141",
+      "name": "Basic LLM Chain"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "41ec49d7-7a6e-4f3f-b6d4-7e0a2ebb74ad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0554aa1aba9c22e967908c36c2f59336ce09eafaaf1d0ef8e73f8a1f92a03dce"
+  },
+  "id": "QuLNj4u70YmwgVOa",
+  "tags": []
+}
