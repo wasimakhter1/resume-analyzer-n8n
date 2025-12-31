@@ -38,6 +38,24 @@ Mohammad Wasim Akhter
 ## Workflow
 ![n8n Workflow](workflow.png)
 
+
+
+
+
+# Resume Analyzer using n8n
+
+## Workflow
+![Workflow](workflow.png)
+
+## Output Example
+![Output](Output.png)
+
+## Files
+- Resume Analyser.json → n8n workflow
+- workflow.png → workflow screenshot
+- Output.png → sample output
+
+
 ## Output Example
 ![Resume Analysis Output](Output.png)
 
