@@ -39,7 +39,7 @@ Mohammad Wasim Akhter
 ![n8n Workflow](workflow.png)
 
 ## Output Example
-![Resume Analysis Output](output.png)
+![Resume Analysis Output](Output.png)
 
 
 
