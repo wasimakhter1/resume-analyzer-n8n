@@ -35,6 +35,11 @@ Mohammad Wasim Akhter
 
 
 
+## Workflow
+![n8n Workflow](workflow.png)
+
+## Output Example
+![Resume Analysis Output](output.png)
 
 
 
