@@ -32,3 +32,9 @@ This project analyzes resumes (PDF) and gives:
 
 ## Author
 Mohammad Wasim Akhter
+
+
+
+
+
+
